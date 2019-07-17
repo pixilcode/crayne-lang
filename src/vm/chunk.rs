@@ -7,6 +7,7 @@ use crate::vm::value::ConstantPool;
 #[derive(PartialEq, Debug)]
 pub enum OpCode {
     Return,
+    Constant,
     Invalid(u8)
 }
 
@@ -14,6 +15,7 @@ impl From<u8> for OpCode {
     fn from(byte: u8) -> Self {
         match byte {
             0 => OpCode::Return,
+            1 => OpCode::Constant,
             invalid => OpCode::Invalid(invalid)
         }
     }
@@ -60,6 +62,14 @@ impl Chunk {
         *self.code.get(offset).unwrap_or(&u8::max_value())
     }
     
+    /// Returns the constant denoted by the index
+    /// 
+    /// If the index is outside the const pool, it
+    /// will return `Value::Invalid`
+    pub fn const_val(&self, index: u8) -> Value {
+        self.constants.get_const(index as usize)
+    }
+    
     /// Return the size of the chunk
     pub fn size(&self) -> usize {
         self.code.len()
@@ -70,8 +80,8 @@ impl Chunk {
     /// not be used for production code.
     pub fn test() -> Self {
         Chunk {
-            code: vec![0, 1],
-            constants: ConstantPool::new()
+            code: vec![0, 1, 0],
+            constants: ConstantPool::new().write(Value::Int(32))
         }
     }
 }
@@ -87,6 +97,17 @@ mod tests {
             constants: ConstantPool::new()
         };
         let actual = Chunk::new().write(1);
+        
+        assert_eq!(expected, actual);
+    }
+    
+    #[test]
+    fn add_a_constant() {
+        let expected = Chunk {
+            code: vec![],
+            constants: ConstantPool::new().write(Value::Int(1))
+        };
+        let actual = Chunk::new().add_constant(Value::Int(1));
         
         assert_eq!(expected, actual);
     }
