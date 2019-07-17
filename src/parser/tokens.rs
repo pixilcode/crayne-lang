@@ -29,7 +29,7 @@ use nom::{
 macro_rules! token {
     ($name:ident: $value:expr; $documentation:expr) => {
         #[doc=$documentation]
-        pub const $name: &'static str = $value;
+        const $name: &'static str = $value;
     };
 }
 
@@ -71,7 +71,7 @@ token!(
 );
 
 /// A structure pairing data with metadata
-pub struct Token<'a, T> {
+struct Token<'a, T> {
     /// The value of the token
     value: T,
     
@@ -89,7 +89,7 @@ impl<'a, T> Token<'a, T> {
     /// 
     /// let token = Token::new(1, Span::new(b"1"));
     /// ```
-    pub fn new(value: T, meta: Span<'a>) -> Self {
+    fn new(value: T, meta: Span<'a>) -> Self {
         Token {
             value,
             meta
@@ -143,7 +143,7 @@ impl<'a> Span<'a> {
     /// assert_eq!(1, meta.column);
     /// assert_eq!(&b"abc"[..], meta.as_slice());
     /// ```
-    pub fn new(input: Input<'a>) -> Self {
+    fn new(input: Input<'a>) -> Self {
         Span {
             offset: 0,
             line: 1,
@@ -167,7 +167,7 @@ impl<'a> Span<'a> {
     /// assert_eq!(3, meta.column);
     /// assert_eq!(&b"abc"[..], meta.as_slice());
     /// ```
-    pub fn new_at(input: Input<'a>, offset: usize, line: u32, column: u32) -> Self {
+    fn new_at(input: Input<'a>, offset: usize, line: u32, column: u32) -> Self {
         Span {
             offset,
             line,
@@ -189,7 +189,7 @@ impl<'a> Span<'a> {
     /// 
     /// assert_eq!(Span::new(b""), meta);
     /// ```
-    pub fn blank() -> Self {
+    fn blank() -> Self {
         Self::new("")
     }
     
