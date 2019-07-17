@@ -5,3 +5,6 @@ authors = ["Brendon Bown <bhbochikens@gmail.com>"]
 edition = "2018"
 
 [dependencies]
+nom = "5.0.0"
+bytecount = "0.5.1"
+memchr = "2.2.0"
