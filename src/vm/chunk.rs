@@ -1,3 +1,6 @@
+use crate::vm::value::Value;
+use crate::vm::value::ConstantPool;
+
 /// Represents the possible one-byte operation
 /// codes (opcodes) that describe the instruction
 /// that follows
@@ -19,14 +22,16 @@ impl From<u8> for OpCode {
 /// A series of bytecode instructions
 #[derive(PartialEq, Debug)]
 pub struct Chunk {
-    code: Vec<u8>
+    code: Vec<u8>,
+    constants: ConstantPool
 }
 
 impl Chunk {
     /// Create a new chunk
     fn new() -> Self {
         Chunk {
-            code: vec![]
+            code: vec![],
+            constants: ConstantPool::new()
         }
     }
     
@@ -34,6 +39,15 @@ impl Chunk {
     fn write(mut self, byte: u8) -> Self {
         self.code.push(byte);
         self
+    }
+    
+    /// Add a constant to the chunk
+    fn add_constant(mut self, value: Value) -> Self {
+        let constants = self.constants.write(value);
+        Chunk {
+            constants,
+            ..self
+        }
     }
     
     /// Return the byte at a specific offset
@@ -56,7 +70,8 @@ impl Chunk {
     /// not be used for production code.
     pub fn test() -> Self {
         Chunk {
-            code: vec![0, 1]
+            code: vec![0, 1],
+            constants: ConstantPool::new()
         }
     }
 }
@@ -68,7 +83,8 @@ mod tests {
     #[test]
     fn write_to_chunk() {
         let expected = Chunk {
-            code: vec![1]
+            code: vec![1],
+            constants: ConstantPool::new()
         };
         let actual = Chunk::new().write(1);
         

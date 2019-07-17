@@ -50,3 +50,5 @@ fn simple_instruction(text: &str, offset: usize) -> (String, usize) {
         offset + 1
     )
 }
+
+// Add tests here when a full VM has been implemented
