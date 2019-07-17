@@ -2,6 +2,6 @@ extern crate nom;
 extern crate bytecount;
 extern crate memchr;
 
-mod parser;
-mod vm;
-mod tools;
+pub mod vm;
+pub mod parser;
+pub mod tools;
