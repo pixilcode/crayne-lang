@@ -28,11 +28,13 @@ impl ConstantPool {
         ConstantPool(vec![])
     }
     
+    /// Add a constant to the pool
     pub fn write(mut self, value: Value) -> Self {
         self.0.push(value);
         self
     }
     
+    /// Get a constant from the pool by index
     pub fn get_const(&self, index: usize) -> Value {
         self.0.get(index).cloned().unwrap_or(Value::DoesNotExist)
     }

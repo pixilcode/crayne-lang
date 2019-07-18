@@ -2,8 +2,8 @@ use crate::vm::chunk::{OpCode, Chunk};
 
 /// Disassemble a chunk into a human-readable
 /// format
-pub fn disassemble_chunk(chunk: Chunk, name: &str) -> String {
-    format!("{}\n{}", chunk_header(name), chunk_body(&chunk, 0))
+pub fn disassemble_chunk(chunk: &Chunk, name: &str) -> String {
+    format!("{}\n{}", chunk_header(name), chunk_body(chunk, 0))
 }
 
 /// Create a chunk header
@@ -25,20 +25,25 @@ fn chunk_body(chunk: &Chunk, offset: usize) -> String {
 /// human-readable format and return the
 /// text and the offset of the end of
 /// the instruction
-fn disassemble_instruction(chunk: &Chunk, offset: usize)
+pub fn disassemble_instruction(chunk: &Chunk, offset: usize)
     -> (String, usize) {
     let (instruction, new_offset) =
         match OpCode::from(chunk.byte_at(offset)) {
             OpCode::Return => simple_instruction("OP_RETURN", offset),
-            Constant => constant_instruction("OP_CONSTANT", chunk, offset),
+            OpCode::Constant => constant_instruction("OP_CONSTANT", chunk, offset),
             OpCode::Invalid(code) => (
                 format!("Unknown opcode: {}\n", code),
                 offset + 1
             )
         };
+    let line = if offset > 0 && chunk.get_line(offset) == chunk.get_line(offset) {
+        "   | ".to_string()
+    } else {
+        format!("{:4} ", chunk.get_line(offset))
+    };
     
     (
-        format!("{:04} {}", offset, instruction),
+        format!("{:04} {}{}", offset, line, instruction),
         new_offset
     )
     
