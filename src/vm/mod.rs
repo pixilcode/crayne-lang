@@ -24,6 +24,7 @@ impl VM {
                 OpCode::Return => break,
                 OpCode::Constant => {
                     let constant = self.chunk.read_const(ip + 1);
+                    ip += 1;
                     // TODO Get rid of this
                     println!("{}", constant);
                 },
